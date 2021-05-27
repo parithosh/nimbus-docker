@@ -2,12 +2,17 @@ FROM debian:buster-slim AS build
 
 SHELL ["/bin/bash", "-c"]
 
+# switch to testing branch to enable an update to >=glibc 2.29 which is required by the nim compiler
+RUN echo deb http://ftp.us.debian.org/debian testing main contrib non-free >> /etc/apt/sources.list
+
 # use gcc 10.2.0-15 or older, see https://github.com/status-im/nimbus-eth2/issues/1970#issuecomment-723736321
 RUN apt-get -qq update \
- && apt-get -qq -y install build-essential libpcre3-dev git &>/dev/null \
+ && apt-get -qq -y install build-essential git &>/dev/null \
  && apt-get -qq clean \
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+
+RUN ldd --version ldd
 # TODO: use volumes or bind-mounts instead
 ADD nimbus-eth2 /root/nimbus-eth2
 
@@ -18,8 +23,8 @@ ADD nimbus-eth2 /root/nimbus-eth2
 # We need to run `make update` again because some absolute paths changed.
 RUN cd /root/nimbus-eth2 \
  && make -j$(nproc) update \
- && make -j$(nproc) LOG_LEVEL="TRACE" NIMFLAGS="-d:insecure" nimbus_beacon_node \
- && make -j$(nproc) LOG_LEVEL="TRACE" NIMFLAGS="-d:insecure" nimbus_validator_client
+ && make -j$(nproc) LOG_LEVEL="TRACE" NIMFLAGS="-d:insecure -d:has_genesis_detection" nimbus_beacon_node \
+ && make -j$(nproc) LOG_LEVEL="TRACE" NIMFLAGS="-d:insecure -d:has_genesis_detection" nimbus_validator_client
 
 # alternatively:
 # && make -j$(nproc) LOG_LEVEL=TRACE NIMFLAGS="-d:insecure -d:ETH2_SPEC=v0.12.1 -d:BLS_ETH2_SPEC=v0.12.x -d:const_preset=/root/config.yaml" nimbus_validator_client
@@ -31,8 +36,11 @@ FROM debian:buster-slim as deploy
 
 SHELL ["/bin/bash", "-c"]
 
+# switch to testing branch to enable an update to >=glibc 2.29 which is required by the nim compiler
+RUN echo deb http://ftp.us.debian.org/debian testing main contrib non-free >> /etc/apt/sources.list
+
 RUN apt-get -qq update \
- && apt-get -qq -y install libpcre3 psmisc &>/dev/null \
+ && apt-get -qq -y install build-essential libpcre3 psmisc &>/dev/null \
  && apt-get -qq clean \
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
