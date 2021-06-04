@@ -26,6 +26,9 @@ jobs:
         run: |
           cd nimbus-docker/nimbus-eth2
           make -j8 update
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@master
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
@@ -35,5 +38,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./nimbus-docker
-          repository: parithoshj/nimbus-docker-genesis
+          file: ./nimbus-docker/Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          tags: parithoshj/nimbus-docker-genesis:latest
           push: true
