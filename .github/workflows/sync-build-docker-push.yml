@@ -24,7 +24,7 @@ jobs:
           path: 'nimbus-docker/nimbus-eth2'
       - shell: bash
         run: |
-          cd nimbus-eth2
+          cd nimbus-docker/nimbus-eth2
           make -j8 update
       - name: docker-build-push
         uses: docker/build-push-action@v1
