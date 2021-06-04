@@ -4,11 +4,18 @@
 #  schedule:
 #    - cron: '0 8 * * *'
 # This workflow is triggered on pushes to the repository.
+name: Manual Inputs
 on:
-  push:
-    tags:
-      - 'v*.*.*'
-
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Choose version for the release
+        default: v0.0.0
+        required: true
+      nimbusRef:
+        description: The branch, tag or SHA to checkout and build from
+        default: stable
+        required: true
 
 jobs:
   git-sync:
@@ -27,20 +34,12 @@ jobs:
         with:
           repository: status-im/nimbus-eth2
           path: 'nimbus-eth2'
+          ref: ${{ github.event.inputs.nimbusRef }}
       - name: Running update
         shell: bash
         run: |
           cd nimbus-eth2
           make -j8 update
-      - name: Build and push
-        id: gen_tags
-        run: |
-          if [[ $GITHUB_REF == 'refs/tags/'* ]]; then
-            TAGS='["parithoshj/nimbus-docker-genesis:latest","'${GITHUB_REF/refs\/tags\//}'"]'
-          else
-            TAGS='["parithoshj/nimbus-docker-genesis:latest"]'
-          fi
-          echo '::set-output name=tags::'$TAGS
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -56,7 +55,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          tags: ${{ fromJson(steps.gen_tags.outputs.tags) }}
+          tags: parithoshj/nimbus-docker-genesis:${{ github.event.inputs.version }}
           push: true
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
