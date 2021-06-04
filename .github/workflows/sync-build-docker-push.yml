@@ -1,0 +1,35 @@
+#name: docker image build and push
+## This workflow is triggered on pushes to the repository.
+#on:
+#  schedule:
+#    - cron: '0 8 * * *'
+# This workflow is triggered on pushes to the repository.
+on:
+  push:
+    branches:
+      - *
+
+jobs:
+  git-sync:
+    name: git-sync
+    # This job runs on Linux
+    runs-on: self-hosted
+    steps:
+      - name: Check out my other private repo
+        uses: actions/checkout@master
+        with:
+          repository: status-im/nimbus-eth2
+          path: 'nimbus-eth2'
+      - shell: bash
+        run: |
+          cd nimbus-eth2
+
+#      - name: docker-build-push
+#        uses: docker/build-push-action@v1
+#        with:
+#          username: ${{ secrets.DOCKER_USERNAME }}
+#          password: ${{ secrets.DOCKER_PASSWORD }}
+#          repository: meltondevops/melton-app-server
+#          tag_with_ref: true
+#          push: ${{ startsWith(github.ref, 'refs/tags/') }}
+#          path: ./app
