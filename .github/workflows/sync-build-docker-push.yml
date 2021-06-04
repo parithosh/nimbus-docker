@@ -17,12 +17,17 @@ jobs:
     steps:
       - name: Checkout this repo
         uses: actions/checkout@v2
+      - name: Running update
+        shell: bash
+        run: |
+          ls
       - name: Check out my other private repo
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
         with:
           repository: status-im/nimbus-eth2
           path: 'nimbus-docker/nimbus-eth2'
-      - shell: bash
+      - name: Running update
+        shell: bash
         run: |
           cd nimbus-docker/nimbus-eth2
           make -j8 update
