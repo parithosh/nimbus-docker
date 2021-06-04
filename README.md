@@ -1,5 +1,9 @@
 # Nimbus Beacon docker fork
 
+## CI Instructions
+- To trigger the CI, go to actions > workflows on the left > Build nimbus-eth2 docker image > Run workflow > enter values and hit run
+
+
 To get Nimbus running in Docker, from arbitrary source checkout.
 
 Custom configuration can be added with `-d:const_preset=/root/config.yaml` in the dockerfile.
