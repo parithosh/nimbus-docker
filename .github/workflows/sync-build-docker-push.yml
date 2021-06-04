@@ -34,7 +34,7 @@ jobs:
       - name: docker-build-push
         uses: docker/build-push-action@v2
         with:
-          context: ./nimbus-docker
+          context: .
           file: ./nimbus-docker/Dockerfile
           tags: parithoshj/nimbus-docker-genesis:latest
           push: true
