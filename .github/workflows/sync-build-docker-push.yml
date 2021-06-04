@@ -6,8 +6,9 @@
 # This workflow is triggered on pushes to the repository.
 on:
   push:
-    branches:
-      - '**'
+    tags:
+      - 'v*.*.*'
+
 
 jobs:
   git-sync:
@@ -48,7 +49,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          tags: parithoshj/nimbus-docker-genesis:latest
+          tags: parithoshj/nimbus-docker-genesis:${GITHUB_REF#refs/*/}
           push: true
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
