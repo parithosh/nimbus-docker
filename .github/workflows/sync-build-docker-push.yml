@@ -24,13 +24,12 @@ jobs:
         run: |
           cd nimbus-eth2
           make -j8 update
-
-#      - name: docker-build-push
-#        uses: docker/build-push-action@v1
-#        with:
-#          username: ${{ secrets.DOCKER_USERNAME }}
-#          password: ${{ secrets.DOCKER_PASSWORD }}
-#          repository: meltondevops/melton-app-server
-#          tag_with_ref: true
-#          push: ${{ startsWith(github.ref, 'refs/tags/') }}
-#          path: ./app
+      - name: docker-build-push
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: parithoshj/nimbus-docker-genesis
+          tag_with_ref: true
+          push: ${{ startsWith(github.ref, 'refs/tags/') }}
+          path: ./nimbus-eth2
