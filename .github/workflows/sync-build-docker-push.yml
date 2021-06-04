@@ -39,6 +39,5 @@ jobs:
         with:
           context: ./nimbus-docker
           file: ./nimbus-docker/Dockerfile
-          builder: ${{ steps.buildx.outputs.name }}
           tags: parithoshj/nimbus-docker-genesis:latest
           push: true
