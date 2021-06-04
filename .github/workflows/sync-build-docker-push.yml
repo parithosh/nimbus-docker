@@ -15,11 +15,13 @@ jobs:
     # This job runs on Linux
     runs-on: self-hosted
     steps:
+      - name: Checkout this repo
+        uses: actions/checkout@master
       - name: Check out my other private repo
         uses: actions/checkout@master
         with:
           repository: status-im/nimbus-eth2
-          path: 'nimbus-eth2'
+          path: 'nimbus-docker/nimbus-eth2'
       - shell: bash
         run: |
           cd nimbus-eth2
@@ -32,4 +34,4 @@ jobs:
           repository: parithoshj/nimbus-docker-genesis
           tag_with_ref: true
           push: ${{ startsWith(github.ref, 'refs/tags/') }}
-          path: ./nimbus-eth2
+          path: ./nimbus-docker
