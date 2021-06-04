@@ -26,12 +26,14 @@ jobs:
         run: |
           cd nimbus-docker/nimbus-eth2
           make -j8 update
-      - name: docker-build-push
-        uses: docker/build-push-action@v1
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: docker-build-push
+        uses: docker/build-push-action@v2
+        with:
+          context: ./nimbus-docker
           repository: parithoshj/nimbus-docker-genesis
-          tag_with_ref: true
-          push: ${{ startsWith(github.ref, 'refs/tags/') }}
-          path: ./nimbus-docker
+          push: true
