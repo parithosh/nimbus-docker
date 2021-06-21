@@ -23,7 +23,6 @@ ADD nimbus-eth2 /root/nimbus-eth2
 # We need to run `make update` again because some absolute paths changed.
 RUN cd /root/nimbus-eth2 \
  && make -j$(nproc) update \
- && make -j$(nproc) LOG_LEVEL="TRACE" NIMFLAGS="" nimbus_beacon_node \
  && make -j$(nproc) LOG_LEVEL="TRACE" NIMFLAGS="" nimbus_validator_client
 
 # alternatively:
@@ -32,23 +31,17 @@ RUN cd /root/nimbus-eth2 \
 # --------------------------------- #
 # Starting new image to reduce size #
 # --------------------------------- #
-FROM debian:buster-slim as deploy
+FROM statusim/nimbus-eth2:amd64-latest as deploy
 
 SHELL ["/bin/bash", "-c"]
 
-# switch to testing branch to enable an update to >=glibc 2.29 which is required by the nim compiler
-RUN echo deb http://ftp.us.debian.org/debian testing main contrib non-free >> /etc/apt/sources.list
-
-RUN apt-get -qq update \
- && apt-get -qq -y install build-essential libpcre3 psmisc &>/dev/null \
- && apt-get -qq clean \
- && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
 # "COPY" creates new image layers, so we cram all we can into one command
-COPY --from=build /root/nimbus-eth2/build/nimbus_beacon_node /usr/bin/beacon_node
-COPY --from=build /root/nimbus-eth2/build/nimbus_validator_client /usr/bin/validator_client
+COPY /home/user/nimbus-eth2/build/nimbus_beacon_node /home/user/nimbus-eth2/build/beacon_node
+COPY --from=build /root/nimbus-eth2/build/nimbus_validator_client /home/user/nimbus-eth2/build/validator_client
 
-RUN mkdir /data
+ENV PATH="/home/user/nimbus-eth2/build:${PATH}"
+ENTRYPOINT [""]
+WORKDIR /home/user/nimbus-eth2/build
 
 STOPSIGNAL SIGINT
 
