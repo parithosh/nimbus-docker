@@ -36,7 +36,6 @@ FROM statusim/nimbus-eth2:amd64-latest as deploy
 SHELL ["/bin/bash", "-c"]
 
 # "COPY" creates new image layers, so we cram all we can into one command
-COPY /home/user/nimbus-eth2/build/nimbus_beacon_node /home/user/nimbus-eth2/build/beacon_node
 COPY --from=build /root/nimbus-eth2/build/nimbus_validator_client /home/user/nimbus-eth2/build/validator_client
 
 ENV PATH="/home/user/nimbus-eth2/build:${PATH}"

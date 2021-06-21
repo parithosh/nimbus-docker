@@ -2,3 +2,4 @@ nimbus-eth2
 
 # Test/util scripts
 *.sh
+.idea
